@@ -12,9 +12,11 @@ export const PrimaryButton = ({
     return (
         <div
             className={`${
-                size === "small" ? "text-sm px-2 py-4" : "text-xl px-5 py-10"
-            } bg-amber-600 text-white cursor-pointer`}
+                size === "small" ? "text-sm px-8 py-1" : "text-xl px-10 py-5"
+            } bg-orange-500 text-white cursor-pointer hover:bg-orange-600 flex items-center rounded-full font-bold hover:shadow-md`}
             onClick={onClick}
-        >{children}</div>
+        >
+            {children}
+        </div>
     );
 };
