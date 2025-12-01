@@ -7,13 +7,13 @@ export const PrimaryButton = ({
 }: {
     children: ReactNode;
     onClick: () => void;
-    size?: "small" | "big";
+    size?: "small" | "big" | "medium";
 }) => {
     return (
         <div
             className={`${
-                size === "small" ? "text-sm px-8 py-1" : "text-xl px-10 py-5"
-            } bg-orange-500 text-white cursor-pointer hover:bg-orange-600 flex items-center rounded-full font-bold hover:shadow-md`}
+                size === "small" ? "text-sm px-8 py-1" : (size === "medium" ? "text-md px-8 py-2" : "text-xl px-10 py-3")
+            } bg-orange-500 text-white cursor-pointer hover:bg-orange-600 flex justify-center items-center rounded-full font-bold hover:shadow-md`}
             onClick={onClick}
         >
             {children}
