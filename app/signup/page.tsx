@@ -4,9 +4,17 @@ import { Appbar } from "@/components/Appbar";
 import { PrimaryButton } from "@/components/buttons/PriamryButton";
 import { InputBox } from "@/components/InputBox";
 import { CheckCircle } from "@deemlol/next-icons";
+import axios from "axios";
 import Link from "next/link";
+import { useState } from "react";
+import { BACKEND_URL } from "../config";
+import { useRouter } from "next/navigation";
 
 export default function () {
+    const [name, setName] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+    const router = useRouter();
     return (
         <div className="h-screen">
             <Appbar></Appbar>
@@ -43,17 +51,23 @@ export default function () {
                         <div>* indicates a required field.</div>
                         <InputBox
                             placeholder=""
-                            onChange={() => {}}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                            }}
                             label="*Working email"
                         ></InputBox>
                         <InputBox
                             placeholder=""
-                            onChange={() => {}}
+                            onChange={(e) => {
+                                setName(e.target.value);
+                            }}
                             label="*Full name"
                         ></InputBox>
                         <InputBox
                             placeholder=""
-                            onChange={() => {}}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                            }}
                             label="*Password"
                             type="password"
                         ></InputBox>
@@ -68,7 +82,25 @@ export default function () {
                             </Link>
                             .
                         </div>
-                        <PrimaryButton size="medium" onClick={() => {}}>
+                        <PrimaryButton
+                            size="medium"
+                            disabled= {(!email || !password || !name) ? true : false}
+                            onClick={async () => {
+                                try {
+                                    const res = await axios.post(
+                                        `${BACKEND_URL}/api/v1/user/signup`,
+                                        {
+                                            name: name,
+                                            email: email,
+                                            password: password,
+                                    }
+                                );
+                            } catch (error) {
+                             console.error(error)   
+                            }
+                                router.push("/login")
+                            }}
+                        >
                             Submit
                         </PrimaryButton>
                         <hr className="mt-2 bg-slate-200 border-0 h-px"></hr>

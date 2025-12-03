@@ -1,3 +1,5 @@
+import { ChangeEvent } from "react";
+
 export const InputBox = ({
     label,
     placeholder,
@@ -6,7 +8,7 @@ export const InputBox = ({
 }: {
     label: string;
     placeholder: string;
-    onChange: () => void;
+    onChange: (e:ChangeEvent<HTMLInputElement>) => void;
     type? : "text" | "password";
 }) => {
     return (
