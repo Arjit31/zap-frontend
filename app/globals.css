@@ -3,3 +3,10 @@
 body {
     background-color: rgb(255, 253, 249);
 }
+
+.dotted {
+  background: white;
+  background-image: radial-gradient(rgb(191, 191, 191) 1px, transparent 0);
+  background-size: 40px 40px;
+  background-position: -19px -19px;
+}
