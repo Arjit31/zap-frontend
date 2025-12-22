@@ -1,4 +1,4 @@
-export type Action = {
+export type Trigger = {
     id: string;
     name: string;
 }

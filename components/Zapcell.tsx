@@ -7,16 +7,16 @@ export const ZapCell = ({
     index,
     type,
     actions,
-    updateActions,
+    addAction,
 }: {
     name: string;
     index: number;
     type: "Action" | "Trigger";
     actions: Action[];
-    updateActions: (actions: Action[]) => void;
+    addAction: (index: number) => void;
 }) => {
     return (
-        <>
+        <div className="flex flex-col items-center justify-center" onClick = {() => {}}>
             <div className="border-2 p-2 w-80 bg-neutral-50">
                 <div className="font-bold">{type}</div>
                 <div>
@@ -28,18 +28,12 @@ export const ZapCell = ({
             <div className="h-5 w-0 border-2 border-slate-400"></div>
             <LinkButton
                 onClick={() => {
-                    const actionArray = [...actions];
-                    actionArray.splice(index, 0, {
-                        availableActionId: "",
-                        availableActionName: "",
-                    });
-                    console.log(actionArray);
-                    updateActions(actionArray);
+                    addAction(index);
                 }}
             >
                 <div className="text-2xl font-extrabold">+</div>
             </LinkButton>
                 <div className="h-5 w-0 border-2 border-slate-400"></div>
-        </>
+        </div>
     );
 };
