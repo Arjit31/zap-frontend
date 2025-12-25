@@ -7,12 +7,13 @@ import { Action } from "@/types/Action";
 import { BACKEND_URL } from "@/app/config";
 import axios from "axios";
 import { Trigger } from "@/types/Trigger";
-import { SecondaryButton } from "@/components/buttons/SecondaryButton";
 
 export default function () {
     const [selectedTrigger, setSelectedTrigger] = useState("");
     const [selectedActions, setSelectedActions] = useState<Action[]>([]);
     const [showModal, setShowModal] = useState<boolean>(false);
+    const [updateActionStatus, setUpdateActionStatus] =
+        useState<boolean>(false);
     const [actionIndex, setActionIndex] = useState<number>(-1);
     const [availableActions, setAvailableActions] = useState<Action[]>([]);
     const [availableTriggers, setAvailableTriggers] = useState<Trigger[]>([]);
@@ -44,23 +45,47 @@ export default function () {
 
     function closeModal() {
         setShowModal(false);
+        setUpdateActionStatus(false);
     }
 
     function setActionByModal(index: number, action: Action) {
         setSelectedActions((actionArray) => {
             const newArray: Action[] = [];
-            for(let i = 0; i <= actionArray.length; i++){
-                if(i < index-1) newArray[i] = actionArray[i];
-                else if(i == index-1) newArray[i] = action;
-                else newArray[i] = actionArray[i-1];
+            for (let i = 0; i <= actionArray.length; i++) {
+                if (i < index - 1) newArray[i] = actionArray[i];
+                else if (i == index - 1) newArray[i] = action;
+                else newArray[i] = actionArray[i - 1];
             }
             return newArray;
+        });
+    }
+
+    function updateActionByModal(index: number, action: Action) {
+        setSelectedActions((actionArray) => {
+            actionArray[index - 2] = action;
+            return actionArray;
         });
     }
 
     function addAction(index: number) {
         setActionIndex(index);
         setShowModal(true);
+    }
+    function updateAction(index: number) {
+        setActionIndex(index);
+        setShowModal(true);
+        setUpdateActionStatus(true);
+    }
+
+    function deleteAction(index: number) {
+        setSelectedActions((actionArray) => {
+            const newArray: Action[] = [];
+            for (let i = 0; i < actionArray.length; i++) {
+                if (i != index - 2) newArray.push(actionArray[i]);
+            }
+            console.log(newArray);
+            return newArray;
+        });
     }
     console.log("rendered");
 
@@ -78,8 +103,10 @@ export default function () {
                             }
                             type="Trigger"
                             index={1}
-                            actions={selectedActions}
+                            // actions={selectedActions}
                             addAction={addAction}
+                            deleteAction={deleteAction}
+                            updateAction={updateAction}
                         />
                         <div className="flex flex-col items-center">
                             {selectedActions.length !== 0 ? (
@@ -89,8 +116,10 @@ export default function () {
                                         name={a.name}
                                         type="Action"
                                         index={i + 2}
-                                        actions={selectedActions}
+                                        // actions={selectedActions}
                                         addAction={addAction}
+                                        deleteAction={deleteAction}
+                                        updateAction={updateAction}
                                     />
                                 ))
                             ) : (
@@ -98,8 +127,10 @@ export default function () {
                                     name="Select an Action"
                                     type="Action"
                                     index={2}
-                                    actions={selectedActions}
+                                    // actions={selectedActions}
                                     addAction={addAction}
+                                    deleteAction={deleteAction}
+                                    updateAction={updateAction}
                                 />
                             )}
                         </div>
@@ -109,6 +140,8 @@ export default function () {
                                 index={actionIndex}
                                 options={availableActions}
                                 setActionByModal={setActionByModal}
+                                forUpdate={updateActionStatus}
+                                updateActionByModal={updateActionByModal}
                             />
                         ) : (
                             <></>
@@ -129,11 +162,15 @@ function Modal({
     index,
     options,
     setActionByModal,
+    forUpdate = false,
+    updateActionByModal,
 }: {
     closeModal: () => void;
     index: number;
     options: Action[];
     setActionByModal: (index: number, action: Action) => void;
+    forUpdate: boolean;
+    updateActionByModal: (index: number, action: Action) => void;
 }) {
     const [selectedOption, setSelectedOption] = useState("");
     return (
@@ -146,9 +183,22 @@ function Modal({
 
                     <button
                         onClick={closeModal}
-                        className="cursor-pointer py-1/2 px-2 text-xl rounded"
+                        className="cursor-pointer py-1 px-1 text-xl rounded-full hover:bg-neutral-200"
                     >
-                        x
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="size-5"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 18 18 6M6 6l12 12"
+                            />
+                        </svg>
                     </button>
                 </div>
                 <div className="mt-2 flex flex-col gap-1 w-full">
@@ -157,7 +207,9 @@ function Modal({
                             <div
                                 key={o.id}
                                 onClick={() => {
-                                    setActionByModal(index, o);
+                                    if (forUpdate) {
+                                        updateActionByModal(index, o);
+                                    } else setActionByModal(index, o);
                                     closeModal();
                                 }}
                                 className={
