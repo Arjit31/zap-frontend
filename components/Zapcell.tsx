@@ -4,6 +4,7 @@ import { Action } from "@/types/Action";
 
 export const ZapCell = ({
     name,
+    imageUrl,
     index,
     type,
     addAction,
@@ -11,6 +12,7 @@ export const ZapCell = ({
     updateAction,
 }: {
     name: string;
+    imageUrl: string | undefined;
     index: number;
     type: "Action" | "Trigger";
     addAction: (index: number) => void;
@@ -27,7 +29,17 @@ export const ZapCell = ({
                     className="cursor-pointer"
                 >
                     <div className="font-bold">{type}</div>
-                    <div>
+                    <div className="flex items-center gap-2">
+                        {imageUrl ? (
+                            <img
+                                src={imageUrl}
+                                className="h-5 w-5 rounded"
+                                alt=""
+                            ></img>
+                        ) : (
+                            <></>
+                        )}
+
                         <div>
                             {index} {name}
                         </div>

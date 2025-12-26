@@ -9,7 +9,7 @@ import axios from "axios";
 import { Trigger } from "@/types/Trigger";
 
 export default function () {
-    const [selectedTrigger, setSelectedTrigger] = useState("");
+    const [selectedTrigger, setSelectedTrigger] = useState<Trigger>();
     const [selectedActions, setSelectedActions] = useState<Action[]>([]);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [updateActionStatus, setUpdateActionStatus] =
@@ -61,6 +61,10 @@ export default function () {
     }
 
     function updateActionByModal(index: number, action: Action) {
+        if(actionIndex === 1){
+            setSelectedTrigger(action);
+            return;
+        }
         setSelectedActions((actionArray) => {
             actionArray[index - 2] = action;
             return actionArray;
@@ -78,6 +82,10 @@ export default function () {
     }
 
     function deleteAction(index: number) {
+        if(actionIndex === 1){
+            setSelectedTrigger(undefined);
+            return;
+        }
         setSelectedActions((actionArray) => {
             const newArray: Action[] = [];
             for (let i = 0; i < actionArray.length; i++) {
@@ -98,8 +106,13 @@ export default function () {
                         <ZapCell
                             name={
                                 selectedTrigger
-                                    ? selectedTrigger
+                                    ? selectedTrigger.name
                                     : "Select a trigger"
+                            }
+                            imageUrl={
+                                selectedTrigger
+                                    ? selectedTrigger.image
+                                    : undefined
                             }
                             type="Trigger"
                             index={1}
@@ -114,6 +127,7 @@ export default function () {
                                     <ZapCell
                                         key={i + 2}
                                         name={a.name}
+                                        imageUrl={a.image}
                                         type="Action"
                                         index={i + 2}
                                         // actions={selectedActions}
@@ -125,6 +139,7 @@ export default function () {
                             ) : (
                                 <ZapCell
                                     name="Select an Action"
+                                    imageUrl={undefined}
                                     type="Action"
                                     index={2}
                                     // actions={selectedActions}
@@ -138,7 +153,7 @@ export default function () {
                             <Modal
                                 closeModal={closeModal}
                                 index={actionIndex}
-                                options={availableActions}
+                                options={actionIndex === 1 ? availableTriggers : availableActions}
                                 setActionByModal={setActionByModal}
                                 forUpdate={updateActionStatus}
                                 updateActionByModal={updateActionByModal}
@@ -178,9 +193,8 @@ function Modal({
             <div className="px-6 py-6 border w-96 shadow-lg rounded-md bg-white">
                 <div className="flex justify-between items-center">
                     <h3 className="text-2xl font-bold text-gray-900">
-                        Select an action
+                        {index === 1 ? <>Select a trigger</> : <>Select an action</>}
                     </h3>
-
                     <button
                         onClick={closeModal}
                         className="cursor-pointer py-1 px-1 text-xl rounded-full hover:bg-neutral-200"
@@ -201,6 +215,7 @@ function Modal({
                         </svg>
                     </button>
                 </div>
+                <div className="h-0 w-full my-2 border border-slate-200"></div>
                 <div className="mt-2 flex flex-col gap-1 w-full">
                     {options.map((o) => {
                         return (
