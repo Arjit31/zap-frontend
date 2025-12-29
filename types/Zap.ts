@@ -9,6 +9,7 @@ export type Zap = {
         type: {
             id: string;
             name: string;
+            image?: string;
         };
     }[];
     triggers: {
@@ -18,6 +19,7 @@ export type Zap = {
         type: {
             id: string;
             name: string;
+            image?: string;
         };
     };
 };

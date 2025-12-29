@@ -7,6 +7,10 @@ import { Action } from "@/types/Action";
 import { BACKEND_URL } from "@/app/config";
 import axios from "axios";
 import { Trigger } from "@/types/Trigger";
+import { PrimaryButton } from "@/components/buttons/PriamryButton";
+import { useRouter } from "next/navigation";
+import { DarkButton } from "@/components/buttons/DarkButton";
+import { SecondaryButton } from "@/components/buttons/SecondaryButton";
 
 export default function () {
     const [selectedTrigger, setSelectedTrigger] = useState<Trigger>();
@@ -18,6 +22,7 @@ export default function () {
     const [availableActions, setAvailableActions] = useState<Action[]>([]);
     const [availableTriggers, setAvailableTriggers] = useState<Trigger[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const router = useRouter();
 
     useEffect(() => {
         async function init() {
@@ -61,7 +66,7 @@ export default function () {
     }
 
     function updateActionByModal(index: number, action: Action) {
-        if(actionIndex === 1){
+        if (actionIndex === 1) {
             setSelectedTrigger(action);
             return;
         }
@@ -82,7 +87,7 @@ export default function () {
     }
 
     function deleteAction(index: number) {
-        if(actionIndex === 1){
+        if (actionIndex === 1) {
             setSelectedTrigger(undefined);
             return;
         }
@@ -101,8 +106,52 @@ export default function () {
         <div>
             <Appbar />
             {!loading ? (
-                <>
-                    <div className="w-full min-h-screen dotted flex flex-col items-center py-20">
+                <div className="dotted">
+                    <div className="flex justify-end w-full p-2">
+                        <SecondaryButton
+                            onClick={async () => {
+                                try {
+                                    if (!selectedTrigger) {
+                                        alert("add a trigger");
+                                        return;
+                                    }
+                                    console.log(selectedActions);
+                                    if (selectedActions.length === 0) {
+                                        alert("add an action");
+                                        return;
+                                    }
+                                    const res = await axios.post(
+                                        `${BACKEND_URL}/api/v1/zap`,
+                                        {
+                                            availableTriggerId:
+                                                selectedTrigger.id,
+                                            triggerMetadata: {},
+                                            actions: selectedActions.map(
+                                                (a) => ({
+                                                    actionId: a.id,
+                                                    availableActionMetadata: {},
+                                                })
+                                            ),
+                                        },
+                                        {
+                                            headers: {
+                                                Authorization:
+                                                    localStorage.getItem(
+                                                        "token"
+                                                    ),
+                                            },
+                                        }
+                                    );
+                                    router.push("/dashboard");
+                                } catch (error) {
+                                    console.error(error);
+                                }
+                            }}
+                        >
+                            Publish
+                        </SecondaryButton>
+                    </div>
+                    <div className="w-full min-h-screen flex flex-col items-center py-20">
                         <ZapCell
                             name={
                                 selectedTrigger
@@ -153,7 +202,11 @@ export default function () {
                             <Modal
                                 closeModal={closeModal}
                                 index={actionIndex}
-                                options={actionIndex === 1 ? availableTriggers : availableActions}
+                                options={
+                                    actionIndex === 1
+                                        ? availableTriggers
+                                        : availableActions
+                                }
                                 setActionByModal={setActionByModal}
                                 forUpdate={updateActionStatus}
                                 updateActionByModal={updateActionByModal}
@@ -162,7 +215,7 @@ export default function () {
                             <></>
                         )}
                     </div>
-                </>
+                </div>
             ) : (
                 <div className="flex justify-center items-center text-3xl p-40">
                     Loading...
@@ -193,7 +246,11 @@ function Modal({
             <div className="px-6 py-6 border w-96 shadow-lg rounded-md bg-white">
                 <div className="flex justify-between items-center">
                     <h3 className="text-2xl font-bold text-gray-900">
-                        {index === 1 ? <>Select a trigger</> : <>Select an action</>}
+                        {index === 1 ? (
+                            <>Select a trigger</>
+                        ) : (
+                            <>Select an action</>
+                        )}
                     </h3>
                     <button
                         onClick={closeModal}
@@ -228,9 +285,10 @@ function Modal({
                                     closeModal();
                                 }}
                                 className={
-                                    "rounded-md px-2 py-1 cursor-pointer hover:bg-slate-100 "
+                                    "rounded-md px-2 py-1 cursor-pointer hover:bg-slate-100 flex items-center gap-2"
                                 }
                             >
+                                {o.image ? <img className="h-5 w-5 rounded" src={o.image}></img> : <></>}
                                 {o.name}
                             </div>
                         );
