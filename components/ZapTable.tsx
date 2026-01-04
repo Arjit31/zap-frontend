@@ -34,6 +34,7 @@ export const ZapTable = ({ zaps }: { zaps: Zap[] }) => {
                                     if (a.type.image) {
                                         return (
                                             <img
+                                                key={a.id}
                                                 src={a.type.image}
                                                 className="h-5 w-5 rounded"
                                                 alt=""

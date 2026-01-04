@@ -9,8 +9,8 @@ import axios from "axios";
 import { Trigger } from "@/types/Trigger";
 import { PrimaryButton } from "@/components/buttons/PriamryButton";
 import { useRouter } from "next/navigation";
-import { DarkButton } from "@/components/buttons/DarkButton";
 import { SecondaryButton } from "@/components/buttons/SecondaryButton";
+import { InputBox } from "@/components/InputBox";
 
 export default function () {
     const [selectedTrigger, setSelectedTrigger] = useState<Trigger>();
@@ -35,6 +35,7 @@ export default function () {
 
             setAvailableTriggers(res1.data);
             setAvailableActions(res2.data);
+            console.log(res2.data)
             setLoading(false);
         }
         init();
@@ -129,7 +130,7 @@ export default function () {
                                             actions: selectedActions.map(
                                                 (a) => ({
                                                     actionId: a.id,
-                                                    availableActionMetadata: {},
+                                                    availableActionMetadata: a.metadata
                                                 })
                                             ),
                                         },
@@ -240,7 +241,17 @@ function Modal({
     forUpdate: boolean;
     updateActionByModal: (index: number, action: Action) => void;
 }) {
-    const [selectedOption, setSelectedOption] = useState("");
+    const [selectedOption, setSelectedOption] = useState<Action>();
+    const [step, setStep] = useState(0);
+    function setMetadata(metadata: any) {
+        if (selectedOption && selectedOption.id && selectedOption.name) {
+            const returnAction = { ...selectedOption, metadata: metadata };
+            if (forUpdate) {
+                updateActionByModal(index, returnAction);
+            } else setActionByModal(index, returnAction);
+            closeModal();
+        }
+    }
     return (
         <div className="fixed inset-0 bg-opacity-50  overflow-y-auto h-full w-full flex items-center justify-center backdrop-blur-[0.4px]">
             <div className="px-6 py-6 border w-96 shadow-lg rounded-md bg-white">
@@ -273,28 +284,129 @@ function Modal({
                     </button>
                 </div>
                 <div className="h-0 w-full my-2 border border-slate-200"></div>
-                <div className="mt-2 flex flex-col gap-1 w-full">
-                    {options.map((o) => {
-                        return (
-                            <div
-                                key={o.id}
-                                onClick={() => {
-                                    if (forUpdate) {
-                                        updateActionByModal(index, o);
-                                    } else setActionByModal(index, o);
-                                    closeModal();
-                                }}
-                                className={
-                                    "rounded-md px-2 py-1 cursor-pointer hover:bg-slate-100 flex items-center gap-2"
-                                }
-                            >
-                                {o.image ? <img className="h-5 w-5 rounded" src={o.image}></img> : <></>}
-                                {o.name}
-                            </div>
-                        );
-                    })}
-                </div>
+                {step === 1 && selectedOption?.name === "Email" && <EmailMenu setMetadata={setMetadata}/>}
+                {step === 1 && selectedOption?.name === "Solana" && <SolanaMenu setMetadata={setMetadata}/>}
+                {step === 0 && (
+                    <div className="mt-2 flex flex-col gap-1 w-full">
+                        {options.map((o) => {
+                            return (
+                                <div
+                                    key={o.id}
+                                    onClick={() => {
+                                        if (index === 1) {
+                                            if (forUpdate) {
+                                                updateActionByModal(index, o);
+                                            } else setActionByModal(index, o);
+                                            closeModal();
+                                        }
+                                        setSelectedOption(o);
+                                        setStep(1);
+                                    }}
+                                    className={
+                                        "rounded-md px-2 py-1 cursor-pointer hover:bg-slate-100 flex items-center gap-2"
+                                    }
+                                >
+                                    {o.image ? (
+                                        <img
+                                            className="h-5 w-5 rounded"
+                                            src={o.image}
+                                        ></img>
+                                    ) : (
+                                        <></>
+                                    )}
+                                    {o.name}
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
         </div>
     );
 }
+
+const EmailMenu = ({
+    setMetadata,
+}: {
+    setMetadata: (metadata: any) => void;
+}) => {
+    const [from, setFrom] = useState("");
+    const [to, setTo] = useState("");
+    const [body, setBody] = useState("");
+    return (
+        <div className="flex flex-col">
+            <InputBox
+                label="From"
+                placeholder="From"
+                onChange={(e) => {
+                    setFrom(e.target.value);
+                }}
+            ></InputBox>
+            <InputBox
+                label="To"
+                placeholder="To"
+                onChange={(e) => {
+                    setTo(e.target.value);
+                }}
+            ></InputBox>
+            <InputBox
+                label="Body"
+                placeholder="Body"
+                onChange={(e) => {
+                    setBody(e.target.value);
+                }}
+            ></InputBox>
+            <div className="mb-4"></div>
+            <PrimaryButton
+                onClick={() => {
+                    setMetadata({ from, to, body });
+                }}
+            >
+                Submit
+            </PrimaryButton>
+        </div>
+    );
+};
+
+const SolanaMenu = ({
+    setMetadata,
+}: {
+    setMetadata: (metadata: any) => void;
+}) => {
+    const [from, setFrom] = useState("");
+    const [to, setTo] = useState("");
+    const [value, setValue] = useState("");
+    return (
+        <div className="flex flex-col">
+            <InputBox
+                label="From"
+                placeholder="From"
+                onChange={(e) => {
+                    setFrom(e.target.value);
+                }}
+            ></InputBox>
+            <InputBox
+                label="To"
+                placeholder="To"
+                onChange={(e) => {
+                    setTo(e.target.value);
+                }}
+            ></InputBox>
+            <InputBox
+                label="Value"
+                placeholder="value"
+                onChange={(e) => {
+                    setValue(e.target.value);
+                }}
+            ></InputBox>
+            <div className="mb-4"></div>
+            <PrimaryButton
+                onClick={() => {
+                    setMetadata({from, to, value });
+                }}
+            >
+                Submit
+            </PrimaryButton>
+        </div>
+    );
+};
