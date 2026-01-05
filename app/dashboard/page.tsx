@@ -8,7 +8,7 @@ import { BACKEND_URL } from "../config";
 import { Zap } from "@/types/Zap";
 import { ZapTable } from "@/components/ZapTable";
 import { useRouter } from "next/navigation";
-import { getCookie } from "cookies-next/client";
+import { deleteCookie } from "cookies-next";
 
 const useZap = () => {
     const [zaps, setZaps] = useState<Zap[]>([]);
@@ -16,9 +16,7 @@ const useZap = () => {
 
     useEffect(() => {
         axios.get(`${BACKEND_URL}/api/v1/zap`, {
-            headers: {
-                Authorization: getCookie("token")
-            }
+            withCredentials: true
         }).then((res) => {
             setZaps(res.data.zaps)
             setLoading(false)
@@ -29,8 +27,17 @@ const useZap = () => {
 };
 
 export default function () {
-    const {zaps, loading} = useZap();
     const router = useRouter()
+    useEffect(() => {
+        axios.get(`${BACKEND_URL}/api/v1/user/auth`, {
+            withCredentials: true
+        }).catch((error) => {
+            console.log(error);
+            deleteCookie("token")
+            router.push("/signup")
+        })
+    }, [])
+    const {zaps, loading} = useZap();
     return (
         <div>
             <Appbar></Appbar>

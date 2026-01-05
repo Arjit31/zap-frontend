@@ -10,9 +10,11 @@ import { useState } from "react";
 import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
 import { setCookie } from "cookies-next/client";
+import { useRedirectOnLogin } from "@/hooks/auth";
 
 export default function () {
     const router = useRouter();
+    useRedirectOnLogin();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     return (

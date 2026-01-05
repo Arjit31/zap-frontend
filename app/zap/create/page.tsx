@@ -11,7 +11,10 @@ import { PrimaryButton } from "@/components/buttons/PriamryButton";
 import { useRouter } from "next/navigation";
 import { SecondaryButton } from "@/components/buttons/SecondaryButton";
 import { InputBox } from "@/components/InputBox";
-import { getCookie } from "cookies-next/client";
+import { deleteCookie } from "cookies-next";
+
+axios.defaults.withCredentials = true;
+
 
 export default function () {
     const [selectedTrigger, setSelectedTrigger] = useState<Trigger>();
@@ -24,6 +27,16 @@ export default function () {
     const [availableTriggers, setAvailableTriggers] = useState<Trigger[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const router = useRouter();
+
+    useEffect(() => {
+        axios.get(`${BACKEND_URL}/api/v1/user/auth`, {
+            withCredentials: true
+        }).catch((error) => {
+            console.log(error);
+            deleteCookie("token")
+            router.push("/signup")
+        })
+    }, [])
 
     useEffect(() => {
         async function init() {
@@ -137,10 +150,7 @@ export default function () {
                                             ),
                                         },
                                         {
-                                            headers: {
-                                                Authorization:
-                                                    getCookie("token"),
-                                            },
+                                            withCredentials: true
                                         }
                                     );
                                     router.push("/dashboard");

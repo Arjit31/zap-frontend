@@ -22,7 +22,7 @@ export const Hero = () => {
                         <PrimaryButton size="big" onClick={() => {router.push("/signup")}}>
                             Get Started Free
                         </PrimaryButton>
-                        <SecondaryButton size="big" onClick={() => {}}>
+                        <SecondaryButton size="big" onClick={() => {router.push("https://akdevelops.netlify.app/")}}>
                             Contact
                         </SecondaryButton>
                     </div>
