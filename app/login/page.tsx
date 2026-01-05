@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
+import { setCookie } from "cookies-next/client";
 
 export default function () {
     const router = useRouter();
@@ -76,14 +77,16 @@ export default function () {
                                             password: password,
                                         }
                                     );
-                                    localStorage.setItem(
-                                        "token",
-                                        res.data.token
-                                    );
+                                    if (res.status !== 200) {
+                                        router.push("/signup");
+                                        return;
+                                    }
+                                    await setCookie("token", res.data.token);
+                                    router.push("/dashboard");
                                 } catch (error) {
-                                    console.error(error)
+                                    console.error(error);
+                                    router.push("/signup");
                                 }
-                                router.push("/dashboard");
                             }}
                         >
                             Continue

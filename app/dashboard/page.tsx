@@ -8,6 +8,7 @@ import { BACKEND_URL } from "../config";
 import { Zap } from "@/types/Zap";
 import { ZapTable } from "@/components/ZapTable";
 import { useRouter } from "next/navigation";
+import { getCookie } from "cookies-next/client";
 
 const useZap = () => {
     const [zaps, setZaps] = useState<Zap[]>([]);
@@ -16,7 +17,7 @@ const useZap = () => {
     useEffect(() => {
         axios.get(`${BACKEND_URL}/api/v1/zap`, {
             headers: {
-                Authorization: localStorage.getItem("token")
+                Authorization: getCookie("token")
             }
         }).then((res) => {
             setZaps(res.data.zaps)

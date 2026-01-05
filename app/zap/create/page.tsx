@@ -11,6 +11,7 @@ import { PrimaryButton } from "@/components/buttons/PriamryButton";
 import { useRouter } from "next/navigation";
 import { SecondaryButton } from "@/components/buttons/SecondaryButton";
 import { InputBox } from "@/components/InputBox";
+import { getCookie } from "cookies-next/client";
 
 export default function () {
     const [selectedTrigger, setSelectedTrigger] = useState<Trigger>();
@@ -35,7 +36,7 @@ export default function () {
 
             setAvailableTriggers(res1.data);
             setAvailableActions(res2.data);
-            console.log(res2.data)
+            console.log(res2.data);
             setLoading(false);
         }
         init();
@@ -130,16 +131,15 @@ export default function () {
                                             actions: selectedActions.map(
                                                 (a) => ({
                                                     actionId: a.id,
-                                                    availableActionMetadata: a.metadata
+                                                    availableActionMetadata:
+                                                        a.metadata,
                                                 })
                                             ),
                                         },
                                         {
                                             headers: {
                                                 Authorization:
-                                                    localStorage.getItem(
-                                                        "token"
-                                                    ),
+                                                    getCookie("token"),
                                             },
                                         }
                                     );
@@ -284,8 +284,12 @@ function Modal({
                     </button>
                 </div>
                 <div className="h-0 w-full my-2 border border-slate-200"></div>
-                {step === 1 && selectedOption?.name === "Email" && <EmailMenu setMetadata={setMetadata}/>}
-                {step === 1 && selectedOption?.name === "Solana" && <SolanaMenu setMetadata={setMetadata}/>}
+                {step === 1 && selectedOption?.name === "Email" && (
+                    <EmailMenu setMetadata={setMetadata} />
+                )}
+                {step === 1 && selectedOption?.name === "Gemini" && (
+                    <GeminiMenu setMetadata={setMetadata} />
+                )}
                 {step === 0 && (
                     <div className="mt-2 flex flex-col gap-1 w-full">
                         {options.map((o) => {
@@ -330,23 +334,23 @@ const EmailMenu = ({
 }: {
     setMetadata: (metadata: any) => void;
 }) => {
-    const [from, setFrom] = useState("");
     const [to, setTo] = useState("");
     const [body, setBody] = useState("");
+    const [subject, setSubject] = useState("");
     return (
         <div className="flex flex-col">
-            <InputBox
-                label="From"
-                placeholder="From"
-                onChange={(e) => {
-                    setFrom(e.target.value);
-                }}
-            ></InputBox>
             <InputBox
                 label="To"
                 placeholder="To"
                 onChange={(e) => {
                     setTo(e.target.value);
+                }}
+            ></InputBox>
+            <InputBox
+                label="Subject"
+                placeholder="Subject"
+                onChange={(e) => {
+                    setSubject(e.target.value);
                 }}
             ></InputBox>
             <InputBox
@@ -359,7 +363,7 @@ const EmailMenu = ({
             <div className="mb-4"></div>
             <PrimaryButton
                 onClick={() => {
-                    setMetadata({ from, to, body });
+                    setMetadata({ to, subject, body });
                 }}
             >
                 Submit
@@ -368,41 +372,25 @@ const EmailMenu = ({
     );
 };
 
-const SolanaMenu = ({
+const GeminiMenu = ({
     setMetadata,
 }: {
     setMetadata: (metadata: any) => void;
 }) => {
-    const [from, setFrom] = useState("");
-    const [to, setTo] = useState("");
-    const [value, setValue] = useState("");
+    const [question, setQuestion] = useState("");
     return (
         <div className="flex flex-col">
             <InputBox
-                label="From"
-                placeholder="From"
+                label="Question"
+                placeholder="Question"
                 onChange={(e) => {
-                    setFrom(e.target.value);
-                }}
-            ></InputBox>
-            <InputBox
-                label="To"
-                placeholder="To"
-                onChange={(e) => {
-                    setTo(e.target.value);
-                }}
-            ></InputBox>
-            <InputBox
-                label="Value"
-                placeholder="value"
-                onChange={(e) => {
-                    setValue(e.target.value);
+                    setQuestion(e.target.value);
                 }}
             ></InputBox>
             <div className="mb-4"></div>
             <PrimaryButton
                 onClick={() => {
-                    setMetadata({from, to, value });
+                    setMetadata({ question });
                 }}
             >
                 Submit

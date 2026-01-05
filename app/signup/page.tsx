@@ -84,7 +84,9 @@ export default function () {
                         </div>
                         <PrimaryButton
                             size="medium"
-                            disabled= {(!email || !password || !name) ? true : false}
+                            disabled={
+                                !email || !password || !name ? true : false
+                            }
                             onClick={async () => {
                                 try {
                                     const res = await axios.post(
@@ -93,12 +95,12 @@ export default function () {
                                             name: name,
                                             email: email,
                                             password: password,
-                                    }
-                                );
-                            } catch (error) {
-                             console.error(error)   
-                            }
-                                router.push("/login")
+                                        }
+                                    );
+                                } catch (error) {
+                                    console.error(error);
+                                }
+                                router.push("/login");
                             }}
                         >
                             Submit
