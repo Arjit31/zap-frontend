@@ -214,7 +214,7 @@ export default function () {
                                 closeModal={closeModal}
                                 index={actionIndex}
                                 options={
-                                    actionIndex === 1
+                                    actionIndex === 1 && updateActionStatus
                                         ? availableTriggers
                                         : availableActions
                                 }
@@ -270,7 +270,7 @@ function Modal({
             <div className="px-6 py-6 border w-96 shadow-lg rounded-md bg-white">
                 <div className="flex justify-between items-center">
                     <h3 className="text-2xl font-bold text-gray-900">
-                        {index === 1 ? (
+                        {index === 1 && forUpdate ? (
                             <>Select a trigger</>
                         ) : (
                             <>Select an action</>
@@ -310,10 +310,8 @@ function Modal({
                                 <div
                                     key={o.id}
                                     onClick={() => {
-                                        if (index === 1) {
-                                            if (forUpdate) {
-                                                updateActionByModal(index, o);
-                                            } else setActionByModal(index, o);
+                                        if (index === 1 && forUpdate) {
+                                            updateActionByModal(index, o);
                                             closeModal();
                                         }
                                         setSelectedOption(o);
