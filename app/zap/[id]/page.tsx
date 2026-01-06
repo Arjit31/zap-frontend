@@ -16,7 +16,11 @@ import { deleteCookie } from "cookies-next";
 axios.defaults.withCredentials = true;
 
 
-export default function () {
+export default function ({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
     const [selectedTrigger, setSelectedTrigger] = useState<Trigger>();
     const [selectedActions, setSelectedActions] = useState<Action[]>([]);
     const [showModal, setShowModal] = useState<boolean>(false);
@@ -26,7 +30,8 @@ export default function () {
     const [availableActions, setAvailableActions] = useState<Action[]>([]);
     const [availableTriggers, setAvailableTriggers] = useState<Trigger[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const router = useRouter();
+    const [zapId, setZapId] = useState<string>("");
+    const router = useRouter();  
 
     useEffect(() => {
         axios.get(`${BACKEND_URL}/api/v1/user/auth`, {
@@ -40,16 +45,33 @@ export default function () {
 
     useEffect(() => {
         async function init() {
+            const { id } = await params;
             const res1 = await axios.get(
                 `${BACKEND_URL}/api/v1/trigger/available`
             );
             const res2 = await axios.get(
                 `${BACKEND_URL}/api/v1/action/available`
             );
-
+            const res3 = await axios.get(
+                `${BACKEND_URL}/api/v1/zap/${id}`
+            )
             setAvailableTriggers(res1.data);
             setAvailableActions(res2.data);
+            setZapId(id);
+            setSelectedActions(res3.data.actions.map((a: any) => ({
+                id: a.type.id,
+                image: a.type.image,
+                name: a.type.name,
+                metadata: a.metadata
+            })))
+            setSelectedTrigger({
+                id: res3.data.triggers.type.id,
+                image: res3.data.triggers.type.image,
+                name: res3.data.triggers.type.name,
+                metadata: res3.data.triggers.metadata
+            })
             console.log(res2.data);
+            console.log(res3.data);
             setLoading(false);
         }
         init();
@@ -135,8 +157,8 @@ export default function () {
                                         alert("add an action");
                                         return;
                                     }
-                                    const res = await axios.post(
-                                        `${BACKEND_URL}/api/v1/zap`,
+                                    const res = await axios.put(
+                                        `${BACKEND_URL}/api/v1/zap/${zapId}`,
                                         {
                                             availableTriggerId:
                                                 selectedTrigger.id,
