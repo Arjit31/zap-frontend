@@ -11,6 +11,7 @@ import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
 import { setCookie } from "cookies-next/client";
 import { useRedirectOnLogin } from "@/hooks/auth";
+import { getCookie } from "cookies-next";
 
 export default function () {
     const router = useRouter();
@@ -84,6 +85,8 @@ export default function () {
                                         return;
                                     }
                                     // await setCookie("token", res.data.token);
+                                    const token = await getCookie("token")
+                                    console.log(token, res.data.token);
                                     router.push("/dashboard");
                                 } catch (error) {
                                     console.error(error);
