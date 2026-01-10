@@ -8,7 +8,7 @@ import { BACKEND_URL } from "../config";
 import { Zap } from "@/types/Zap";
 import { ZapTable } from "@/components/ZapTable";
 import { useRouter } from "next/navigation";
-import { deleteCookie } from "cookies-next";
+import { deleteCookie, getCookie } from "cookies-next";
 
 const useZap = () => {
     const [zaps, setZaps] = useState<Zap[]>([]);
@@ -29,6 +29,7 @@ const useZap = () => {
 export default function () {
     const router = useRouter()
     useEffect(() => {
+        console.log(getCookie("token"));
         axios.get(`${BACKEND_URL}/api/v1/user/auth`, {
             withCredentials: true
         }).catch((error) => {
