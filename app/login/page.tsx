@@ -83,7 +83,7 @@ export default function () {
                                         router.push("/signup");
                                         return;
                                     }
-                                    await setCookie("token", res.data.token);
+                                    // await setCookie("token", res.data.token);
                                     router.push("/dashboard");
                                 } catch (error) {
                                     console.error(error);
