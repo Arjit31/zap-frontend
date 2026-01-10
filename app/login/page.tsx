@@ -78,14 +78,15 @@ export default function () {
                                         {
                                             email: email,
                                             password: password,
-                                        }
+                                        },
+                                        { withCredentials: true }
                                     );
                                     if (res.status !== 200) {
                                         router.push("/signup");
                                         return;
                                     }
                                     // await setCookie("token", res.data.token);
-                                    const token = await getCookie("token")
+                                    const token = await getCookie("token");
                                     console.log(token, res.data.token);
                                     router.push("/dashboard");
                                 } catch (error) {
