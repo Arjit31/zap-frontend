@@ -1,4 +1,4 @@
-export const BACKEND_URL = "http://localhost:5000"
-export const HOOK_URL = "http://localhost:3001"
-export const PROCESSOR_URL = "http://localhost:3004"
-export const WORKER_URL = "http://localhost:3005"
+export const BACKEND_URL = "https://zap-primary-backend-2idg.onrender.com"
+export const HOOK_URL = "https://zap-hooks.onrender.com"
+export const PROCESSOR_URL = "https://processor-ii32.onrender.com"
+export const WORKER_URL = "https://worker-kxnn.onrender.com"
