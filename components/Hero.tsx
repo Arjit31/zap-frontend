@@ -26,6 +26,7 @@ export const Hero = () => {
                             Contact
                         </SecondaryButton>
                     </div>
+                    <div className="font-bold">**The first request like login might take few seconds because of cold restart in free servers but after that the system stays responsive with simple keep-alive pings**</div>
                 </div>
                 <Image
                     src={"/images/hero-image.png"}
