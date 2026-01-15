@@ -109,7 +109,7 @@ export default function () {
                                 Sign up
                             </Link>
                         </div>
-                        <div className="text-center text-blue-700 underline" onClick={() => {
+                        <div className="text-center text-blue-700 underline cursor-pointer" onClick={() => {
                             setEmail("guestEmail@email.com")
                             setPassword("12345")
                         }}>
