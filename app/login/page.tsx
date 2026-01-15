@@ -57,6 +57,7 @@ export default function () {
                             onChange={(e) => {
                                 setEmail(e.target.value);
                             }}
+                            value={email}
                             label="*Working email"
                         ></InputBox>
                         <InputBox
@@ -64,6 +65,7 @@ export default function () {
                             onChange={(e) => {
                                 setPassword(e.target.value);
                             }}
+                            value={password}
                             label="*Password"
                             type="password"
                         ></InputBox>
@@ -106,6 +108,12 @@ export default function () {
                             >
                                 Sign up
                             </Link>
+                        </div>
+                        <div className="text-center text-blue-700 underline" onClick={() => {
+                            setEmail("guestEmail@email.com")
+                            setPassword("12345")
+                        }}>
+                            Guest Login
                         </div>
                     </div>
                 </div>
